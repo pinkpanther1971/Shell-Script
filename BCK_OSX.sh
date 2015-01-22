@@ -30,7 +30,7 @@ function ServerAdminBackup {
 				then
 					echo -e "Backup dei servizi Server eseguito correttamente\n " >> ${TMP_SERVER_RISULTATO}
 				else
-					echo -e "ATTENZIONE: problemi con il backup dei servizi Server\n " >> ${TMP_SERVER_RISULTATO}
+					echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} problemi con il backup dei servizi Server\n " >> ${TMP_SERVER_RISULTATO}
 				fi
 	}
 	lista_servizi=$(${SERVERADMIN} list)
@@ -42,7 +42,7 @@ function ServerAdminBackup {
 					then
 						echo -e "Backup del ${SERVIZIO} eseguito con esito positivo\n " >> ${TMP_SERVIZI_RISULTATO}
 					else
-						echo -e "ATTENZIONE: Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
+						echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
 				fi
 		done
 	}
@@ -63,7 +63,7 @@ function DirServBackup {
 				then
 					echo -e "Backup dei dati di Open Directory eseguita correttamente\n " >> ${TMP_OD_RISULTATO}
 				else
-					echo -e "ATTENZIONE: problemi con il backup dei dati di Open Directory\n " >> ${TMP_OD_RISULTATO}
+					echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} problemi con il backup dei dati di Open Directory\n " >> ${TMP_OD_RISULTATO}
 			fi
 
 
@@ -83,7 +83,7 @@ function MailBackup {
 				then
 					echo -e "Backup della componente Mail eseguita con esito positivo\n " >> ${TMP_MAIL_RISULTATO}
 				else
-					echo -e "ATTENZIONE: Backup della componente Mail eseguita con esito negativo\n " >> ${TMP_MAIL_RISULTATO}
+					echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Backup della componente Mail eseguita con esito negativo\n " >> ${TMP_MAIL_RISULTATO}
 			fi				
 		}
 
@@ -97,7 +97,7 @@ function CopiaSicurezza {
 			then
 				echo -e "Backup di sicurezza eseguito con esito positivo\n " >> ${TMP_SICUREZZA_RISULTATO}
 			else
-				echo -e "ATTENZIONE: Backup di sicurezza eseguito con esito negativo\n " >> ${TMP_SICUREZZA_RISULTATO}
+				echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Backup di sicurezza eseguito con esito negativo\n " >> ${TMP_SICUREZZA_RISULTATO}
 		fi
 			}
 
@@ -112,7 +112,7 @@ function EliminaVecchiBCK {
 			then
 				echo -e "I file sono stati rimossi con esito positivo\n " >> ${TMP_REMOVE_RISULTATO}
 			else
-				echo -e "ATTENZIONE: Problemi nella fase di rimozione dei file\n " >> ${TMP_REMOVE_RISULTATO}
+				echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Problemi nella fase di rimozione dei file\n " >> ${TMP_REMOVE_RISULTATO}
 		fi
 			} 
 			
@@ -127,7 +127,7 @@ function CambioPermessi {
 			then
 				echo -e "Cambio proprietario eseguito correttamente\n " >> ${TMP_OWNER_RISULTATO}
 			else
-				echo -e "ATTENZIONE: ATTENZIONE: Problemi nella fase di cambio permessi del proprietario\n " >> ${TMP_OWNER_RISULTATO}
+				echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Problemi nella fase di cambio permessi del proprietario\n " >> ${TMP_OWNER_RISULTATO}
 		fi
 
 }
