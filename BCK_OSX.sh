@@ -1,6 +1,6 @@
 #! /bin/bash
  
- . $HOME/.pinkenv # File contenente tutte le variabili / This file contains all variables
+ . $HOME/.rootenv # File contenente tutte le variabili / This file contains all variables
  
  set -x
 # Script per il backup della componente server
@@ -17,6 +17,7 @@ rm ${TMP_OD_RISULTATO}
 rm ${TMP_MAIL_RISULTATO}
 rm ${TMP_SICUREZZA_RISULTATO}
 rm ${TMP_REMOVE_RISULTATO}
+rm ${TMP_OWNER_RISULTATO}
 rm ${TMP_CORPO_MAIL}
 
 ### Funzione Backup Servzi Server / Server Configuration files backup
@@ -24,7 +25,7 @@ rm ${TMP_CORPO_MAIL}
 function ServerAdminBackup {
 	
 	{
-		echo "${PASS}" | sudo -S ${SERVERADMIN} settings all -x > ${SETTINGS_FILENAME}
+		 ${SERVERADMIN} settings all -x > ${SETTINGS_FILENAME}
 			if [ "$?" ==  0 ];
 				then
 					echo -e "Backup dei servizi Server eseguito correttamente\n " >> ${TMP_SERVER_RISULTATO}
@@ -32,16 +33,16 @@ function ServerAdminBackup {
 					echo -e "ATTENZIONE: problemi con il backup dei servizi Server\n " >> ${TMP_SERVER_RISULTATO}
 				fi
 	}
-	lista_servizi=$(echo "${PASS}" | sudo -S ${SERVERADMIN} list)
+	lista_servizi=$(${SERVERADMIN} list)
 	{
 		for SERVIZIO in ${lista_servizi}; 
 		do
-	 		sudo ${SERVERADMIN} settings ${SERVIZIO} -x > ${GEN_BCK_DEST}/BCK_${SERVIZIO}_${DATE}.plist
+	 		${SERVERADMIN} settings ${SERVIZIO} -x > ${GEN_BCK_DEST}/BCK_${SERVIZIO}_${DATE}.plist
 				if [ "$?" ==  0 ];
 					then
 						echo -e "Backup del ${SERVIZIO} eseguito con esito positivo\n " >> ${TMP_SERVIZI_RISULTATO}
 					else
-						echo -e "Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
+						echo -e "ATTENZIONE: Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
 				fi
 		done
 	}
@@ -53,19 +54,19 @@ function ServerAdminBackup {
 
 function DirServBackup {
 
-
-{    echo "dirserv:backupArchiveParams:archivePassword = ${PASS}" > ${GEN_BCK_DEST}/od_env.txt
+    echo "dirserv:backupArchiveParams:archivePassword = ${PASS}" > ${GEN_BCK_DEST}/od_env.txt
             echo "dirserv:backupArchiveParams:archivePath = ${GEN_BCK_DEST}/DirServ_$DATE.sparseimage" >> ${GEN_BCK_DEST}/od_env.txt
             echo "dirserv:command = backupArchive" >> ${GEN_BCK_DEST}/od_env.txt
             echo "" >> ${GEN_BCK_DEST}/od_env.txt
-          sudo serveradmin command < ${GEN_BCK_DEST}/od_env.txt
-	  }		
+   ${SERVERADMIN} command < $OD_BCK_DEST/od_env.txt
 			if [ "$?" ==  0 ];
 				then
 					echo -e "Backup dei dati di Open Directory eseguita correttamente\n " >> ${TMP_OD_RISULTATO}
 				else
 					echo -e "ATTENZIONE: problemi con il backup dei dati di Open Directory\n " >> ${TMP_OD_RISULTATO}
 			fi
+
+
 			}		
 
 
@@ -76,13 +77,13 @@ function DirServBackup {
 
 function MailBackup {
 
-	echo ${PASS} | sudo -S tar -cvf ${GEN_BCK_DEST}/${MAIL_BCK_NAME} /Library/Server/Mail
-	gzip ${GEN_BCK_DEST}/${MAIL_BCK_NAME}			
+	  tar -cvf ${GEN_BCK_DEST}/${MAIL_BCK_NAME} /Library/Server/Mail
+	 gzip ${GEN_BCK_DEST}/${MAIL_BCK_NAME}			
 			if [ "$?" ==  0 ];
 				then
 					echo -e "Backup della componente Mail eseguita con esito positivo\n " >> ${TMP_MAIL_RISULTATO}
 				else
-					echo -e "Backup della componente Mail eseguita con esito negativo\n " >> ${TMP_MAIL_RISULTATO}
+					echo -e "ATTENZIONE: Backup della componente Mail eseguita con esito negativo\n " >> ${TMP_MAIL_RISULTATO}
 			fi				
 		}
 
@@ -96,7 +97,7 @@ function CopiaSicurezza {
 			then
 				echo -e "Backup di sicurezza eseguito con esito positivo\n " >> ${TMP_SICUREZZA_RISULTATO}
 			else
-				echo -e "Backup di sicurezza eseguito con esito negativo\n " >> ${TMP_SICUREZZA_RISULTATO}
+				echo -e "ATTENZIONE: Backup di sicurezza eseguito con esito negativo\n " >> ${TMP_SICUREZZA_RISULTATO}
 		fi
 			}
 
@@ -111,9 +112,24 @@ function EliminaVecchiBCK {
 			then
 				echo -e "I file sono stati rimossi con esito positivo\n " >> ${TMP_REMOVE_RISULTATO}
 			else
-				echo -e "Problemi nella fase di rimozione dei file\n " >> ${TMP_REMOVE_RISULTATO}
+				echo -e "ATTENZIONE: Problemi nella fase di rimozione dei file\n " >> ${TMP_REMOVE_RISULTATO}
 		fi
 			} 
+			
+### Funzione di cambio proprietario / Changing Owner & Group
+
+function CambioPermessi {
+
+		chown -R thegod:staff ${GEN_BCK_DEST}
+
+		if [ "$?" ==  0 ];
+			then
+				echo -e "Cambio proprietario eseguito correttamente\n " >> ${TMP_OWNER_RISULTATO}
+			else
+				echo -e "ATTENZIONE: ATTENZIONE: Problemi nella fase di cambio permessi del proprietario\n " >> ${TMP_OWNER_RISULTATO}
+		fi
+
+}
 
 ### Funzione per la creazione del corpo della mail da inviare / Now I create a body mail
 
@@ -126,6 +142,7 @@ function CorpoMail {
 	cat ${TMP_MAIL_RISULTATO} >> ${TMP_CORPO_MAIL}
 	cat ${TMP_SICUREZZA_RISULTATO} >> ${TMP_CORPO_MAIL}
 	cat ${TMP_REMOVE_RISULTATO} >> ${TMP_CORPO_MAIL}
+	cat ${TMP_OWNER_RISULTATO} >> ${TMP_CORPO_MAIL}
 	echo -e "Mail generata automaticamente. Si prega di non rispondere alla presente casella mail, in quanto non presidiata.\n " >> ${TMP_CORPO}
 	echo -e "Grazie per la collaborazione.\n " >> ${TMP_CORPO_MAIL}
 	echo -e "Saluti.\n " >> ${TMP_CORPO_MAIL}
@@ -140,6 +157,7 @@ cat ${TMP_CORPO_MAIL} | mailx -s "Risultato del Backup della Componente Server d
 
 }
  
+
 ### CASE
 
 case "${1}" in
@@ -164,7 +182,8 @@ case "${1}" in
 			MailBackup
 			CopiaSicurezza
 			EliminaVecchiBCK
-			CorpoMail
+			CambioPermessi
+			CorpoMail			
 			InviaReportMail
 			;;
 	*)
