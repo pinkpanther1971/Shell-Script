@@ -1,6 +1,6 @@
 #! /bin/bash
  
- . $HOME/.rootenv # File contenente tutte le variabili / This file contains all variables
+ . $PATH/env_file # File contenente tutte le variabili / This file contains all variables
  
  set -x
 # Script per il backup della componente server
@@ -30,19 +30,19 @@ function ServerAdminBackup {
 				then
 					echo -e "Backup dei servizi Server eseguito correttamente\n " >> ${TMP_SERVER_RISULTATO}
 				else
-					echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} problemi con il backup dei servizi Server\n " >> ${TMP_SERVER_RISULTATO}
+					echo -e "ATTENZIONE: problemi con il backup dei servizi Server\n " >> ${TMP_SERVER_RISULTATO}
 				fi
 	}
 	lista_servizi=$(${SERVERADMIN} list)
 	{
 		for SERVIZIO in ${lista_servizi}; 
 		do
-	 		${SERVERADMIN} settings ${SERVIZIO} -x > ${GEN_BCK_DEST}/BCK_${SERVIZIO}_${DATE}.plist
+	 		${SERVERADMIN} settings ${SERVIZIO} -x > ${GEN_BCK_DEST}/BCK_${SERVIZIO}_${DATA}.plist
 				if [ "$?" ==  0 ];
 					then
 						echo -e "Backup del ${SERVIZIO} eseguito con esito positivo\n " >> ${TMP_SERVIZI_RISULTATO}
 					else
-						echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
+						echo -e "ATTENZIONE: Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
 				fi
 		done
 	}
@@ -55,7 +55,7 @@ function ServerAdminBackup {
 function DirServBackup {
 
     echo "dirserv:backupArchiveParams:archivePassword = ${PASS}" > ${GEN_BCK_DEST}/od_env.txt
-            echo "dirserv:backupArchiveParams:archivePath = ${GEN_BCK_DEST}/DirServ_$DATE.sparseimage" >> ${GEN_BCK_DEST}/od_env.txt
+            echo "dirserv:backupArchiveParams:archivePath = ${GEN_BCK_DEST}/DirServ_$DATA.sparseimage" >> ${GEN_BCK_DEST}/od_env.txt
             echo "dirserv:command = backupArchive" >> ${GEN_BCK_DEST}/od_env.txt
             echo "" >> ${GEN_BCK_DEST}/od_env.txt
    ${SERVERADMIN} command < $OD_BCK_DEST/od_env.txt
@@ -63,7 +63,7 @@ function DirServBackup {
 				then
 					echo -e "Backup dei dati di Open Directory eseguita correttamente\n " >> ${TMP_OD_RISULTATO}
 				else
-					echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} problemi con il backup dei dati di Open Directory\n " >> ${TMP_OD_RISULTATO}
+					echo -e "ATTENZIONE: problemi con il backup dei dati di Open Directory\n " >> ${TMP_OD_RISULTATO}
 			fi
 
 
@@ -83,7 +83,7 @@ function MailBackup {
 				then
 					echo -e "Backup della componente Mail eseguita con esito positivo\n " >> ${TMP_MAIL_RISULTATO}
 				else
-					echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Backup della componente Mail eseguita con esito negativo\n " >> ${TMP_MAIL_RISULTATO}
+					echo -e "ATTENZIONE: Backup della componente Mail eseguita con esito negativo\n " >> ${TMP_MAIL_RISULTATO}
 			fi				
 		}
 
@@ -92,12 +92,12 @@ function MailBackup {
 ### Funzione Backup Copia di Sicurezza / Security Copy (different device)
 
 function CopiaSicurezza {
-	scp -r ${GEN_BCK_DEST}/*${DATE}* root@nas:${BCKNASOSX}
+	scp -r ${GEN_BCK_DEST}/*${DATA}* root@nas:${BCKNASOSX}
 		if [ "$?" ==  0 ];
 			then
 				echo -e "Backup di sicurezza eseguito con esito positivo\n " >> ${TMP_SICUREZZA_RISULTATO}
 			else
-				echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Backup di sicurezza eseguito con esito negativo\n " >> ${TMP_SICUREZZA_RISULTATO}
+				echo -e "ATTENZIONE: Backup di sicurezza eseguito con esito negativo\n " >> ${TMP_SICUREZZA_RISULTATO}
 		fi
 			}
 
@@ -112,7 +112,7 @@ function EliminaVecchiBCK {
 			then
 				echo -e "I file sono stati rimossi con esito positivo\n " >> ${TMP_REMOVE_RISULTATO}
 			else
-				echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Problemi nella fase di rimozione dei file\n " >> ${TMP_REMOVE_RISULTATO}
+				echo -e "ATTENZIONE: Problemi nella fase di rimozione dei file\n " >> ${TMP_REMOVE_RISULTATO}
 		fi
 			} 
 			
@@ -127,7 +127,7 @@ function CambioPermessi {
 			then
 				echo -e "Cambio proprietario eseguito correttamente\n " >> ${TMP_OWNER_RISULTATO}
 			else
-				echo -e "${RED}${BOLD}${UNDERLINE}ATTENZIONE:${NONE} Problemi nella fase di cambio permessi del proprietario\n " >> ${TMP_OWNER_RISULTATO}
+				echo -e "ATTENZIONE: Problemi nella fase di cambio permessi del proprietario\n " >> ${TMP_OWNER_RISULTATO}
 		fi
 
 }
@@ -144,7 +144,7 @@ function CorpoMail {
 	cat ${TMP_SICUREZZA_RISULTATO} >> ${TMP_CORPO_MAIL}
 	cat ${TMP_REMOVE_RISULTATO} >> ${TMP_CORPO_MAIL}
 	cat ${TMP_OWNER_RISULTATO} >> ${TMP_CORPO_MAIL}
-	echo -e "Mail generata automaticamente. Si prega di non rispondere alla presente casella mail, in quanto non presidiata.\n " >> ${TMP_CORPO}
+	echo -e "Mail generata automaticamente. Si prega di non rispondere alla presente casella mail, in quanto non presidiata.\n " >> ${TMP_CORPO_MAIL}
 	echo -e "Grazie per la collaborazione.\n " >> ${TMP_CORPO_MAIL}
 	echo -e "Saluti.\n " >> ${TMP_CORPO_MAIL}
 }
@@ -154,7 +154,7 @@ function CorpoMail {
 
 function InviaReportMail {
 
-cat ${TMP_CORPO_MAIL} | mailx -s "Risultato del Backup della Componente Server del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
+cat ${TMP_CORPO_MAIL} |  mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
 
 }
  
