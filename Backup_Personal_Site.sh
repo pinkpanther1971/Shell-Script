@@ -111,8 +111,7 @@ echo "" >> ${TMP_RISULTATO}
 
 function CambioPermessi {
 
-                chown -R ${MYUSER}:${MYGROUP} ${GEN_BCK_DEST}
-              #  chown -R thegod:staff ${OUTDIR}
+                chown -R ${MYUSER}:${MYGROUP} ${OUTDIR}
 
                 if [ "$?" ==  0 ];
                         then

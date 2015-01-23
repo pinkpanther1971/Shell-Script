@@ -133,7 +133,6 @@ function EliminaVecchiBCK {
 function CambioPermessi {
 
 		chown -R ${MYUSER}:${MYGROUP} ${GEN_BCK_DEST}
-		#chown -R thegod:staff ${GEN_BCK_DEST}
 
 		if [ "$?" ==  0 ];
 			then
