@@ -1,6 +1,6 @@
 #! /bin/bash
  
-. $PATH/env_file # File contenente tutte le variabili / This file contains all variables
+#. $PATH/env_file # File contenente tutte le variabili DECOMMENTARE / This file contains all variables UNCOMMENT
  
 # set -x
 
@@ -166,13 +166,13 @@ function CorpoMail {
 function InviaReportMail {
 export TEST=$(date +%H)
 
-if [[ ${TEST} == 00]]; then
+if [[ ${TEST} == 00 ]]; then
 
-cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
+cat ${TMP_CORPO_MAIL} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
 else
-cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER1}" -F "Admin" -f "${SENDER}"
+cat ${TMP_CORPO_MAIL} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER1}" -F "Admin" -f "${SENDER}"
 fi
-} 
+}
 
 ### CASE
 

@@ -14,7 +14,7 @@
 
 # Carico le variabili necessarie allo script / Source env file
 
-. $PATH/env_file # File contenente tutte le variabili / This file contains all variables
+#. $PATH/env_file # File contenente tutte le variabili DECOMMNTARE / This file contains all variables UNCOMMENT
 
 #### INIZIO FUNZIONI / START FUNCTIONS ####
 
