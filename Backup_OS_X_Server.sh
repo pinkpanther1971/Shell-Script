@@ -1,15 +1,25 @@
 #! /bin/bash
  
- . $PATH/env_file # File contenente tutte le variabili / This file contains all variables
+. $PATH/env_file # File contenente tutte le variabili / This file contains all variables
  
- set -x
-# Script per il backup della componente server
-# Verrà effettuato il backup delle impostazioni
-# Dell'Open Directory
-# Del Profile Manager
-# e del Wiki (DB Compreso)
+# set -x
 
-#### ELIMINO FILE TEMPORANEI / Remove temporary files
+# IT
+
+# Script per il backup delle componenti server:
+# Impostazioni Servizi
+# Open Directory
+# Mail
+
+# EN
+# Backup OS X Server Script:
+# Settings
+# Open Directory
+# Mail
+
+# Funzione per la rimozione dei file temporanei /Remove temporary files
+
+function RemoveTMP	{
 
 rm ${TMP_SERVER_RISULTATO}
 rm ${TMP_SERVIZI_RISULTATO}
@@ -19,6 +29,8 @@ rm ${TMP_SICUREZZA_RISULTATO}
 rm ${TMP_REMOVE_RISULTATO}
 rm ${TMP_OWNER_RISULTATO}
 rm ${TMP_CORPO_MAIL}
+
+			}
 
 ### Funzione Backup Servzi Server / Server Configuration files backup
 
@@ -153,11 +165,15 @@ function CorpoMail {
 # Funzione per l'invio della mail / Send Mail Function
 
 function InviaReportMail {
+export TEST=$(date +%H)
 
-cat ${TMP_CORPO_MAIL} |  mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
+if [[ ${TEST} == 00]]; then
 
-}
- 
+cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
+else
+cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER1}" -F "Admin" -f "${SENDER}"
+fi
+} 
 
 ### CASE
 
@@ -178,6 +194,7 @@ case "${1}" in
 			CopiaSicurezza
 			;;
 		ALL)
+			RemoveTMP
 			ServerAdminBackup
 			DirServBackup
 			MailBackup

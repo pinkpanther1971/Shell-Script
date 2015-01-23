@@ -1,37 +1,49 @@
 #! /bin/bash
 
 #set -x
-# Lo script consente di effettuare il backup dei DB MySQL, della componente WEB e la rimozione 
-# dei file piu vecchi di 5 giorni.
-# E' possibile anche effettuare lo stop/start della parte Web
 
-# Carico le variabili necessarie allo script
+## IT
+# Script per il backup dei DB di MySQL e della Document Root del WebServer
+# Permette la rimozione dei file più vecchi in base alle variabili END_LIFE e END_LIFE_NAS
+# Invia la mail per il risultato del backup
 
-. $PATH/env_file
+# EN
+# Use this script to backup your personal MySQL Databases, Document Root of your WebServer
+# The Script removes old file (END_LIFE and END_LIFE_NAS Varaibles).
+# Send mail with the result of backup.
 
-#### ELIMINO FILE TEMPORANEI
+# Carico le variabili necessarie allo script / Source env file
+
+. $PATH/env_file # File contenente tutte le variabili / This file contains all variables
+
+#### INIZIO FUNZIONI / START FUNCTIONS ####
+
+# Funzione per la rimozione dei file temporanei /Remove temporary files
+
+function RemoveTMP {
 
 rm ${TMP_RISULTATO}
 rm ${TMP_CORPO}
 
-#### INIZIO FUNZIONI ####
+		}
 
+# Funzione per lo Stop Componente web /Stop WebServer
 
-# Funzione per lo Stop Componente web
 function StopServer {
 	
 ${SERVERADMIN} stop web
 
 }
 
-# Funzione per lo Start Componente web
+# Funzione per lo Start Componente web /Start Web Server
+
 function StartServer {
 	
 ${SERVERADMIN} start web
 
 }
 
-# Funzione per il Backup dei DB
+# Funzione per il Backup dei DB / MySQL DB Backup
 
 function BackupDB {
 
@@ -48,7 +60,7 @@ fi
 done
 }
 
-# Funzione per il Backup della parte Web
+# Funzione per il Backup della parte Web / Document Root Backup
 
 function BackupWEB {
 
@@ -64,7 +76,7 @@ echo "" >> ${TMP_RISULTATO}
 fi
 }
 
-# Funzione per la copia di sicurezza su discon NAS
+# Funzione per la copia di sicurezza su discon NAS / Security Copy
 
 function CopiaSicurezza {
 	scp ${OUTDIR}/*_${DATA}.sql root@nas:${BCKNAS}
@@ -79,7 +91,7 @@ echo "" >> ${TMP_RISULTATO}
 fi
 }
 
-# Funzione per la rimozione dei file in base a quanto impostato nella variabile END_LIFE
+# Funzione per la rimozione dei file in base a quanto impostato nella variabile END_LIFE / Remove old files
 
 function EliminaVecchiBCK {
 
@@ -111,7 +123,7 @@ function CambioPermessi {
 
 }
 
-# Funzione per la creazione del corpo della mail da inviare
+# Funzione per la creazione del corpo della mail da inviare / Create Body Email
 
 function CorpoMail {
 echo "Salve," > ${TMP_CORPO}
@@ -127,12 +139,17 @@ echo Saluti."" >> ${TMP_CORPO}
 echo "" >> ${TMP_CORPO}
 }
 
-# Funzione per l'invio della mail
+# Funzione per l'invio della mail / Send Mail
 
 function InviaReportMail {
+export TEST=$(date +%H)
+
+if [[ ${TEST} == 00 ]]; then
 
 cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
-
+else
+cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER1}" -F "Admin" -f "${SENDER}"
+fi
 }
 
 #### MAIN PROGRAM ####
@@ -154,6 +171,7 @@ case "${1}" in
 		EliminaVecchiBCK
         ;;
 	all)
+		RemoveTMP
 		BackupDB
 		BackupWEB
 		CopiaSicurezza
