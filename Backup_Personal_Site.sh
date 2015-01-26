@@ -64,7 +64,7 @@ done
 
 function BackupWEB {
 
-tar -cvf ${OUTDIR}/WebServer_${DATA}.tar ${WEBDIR}
+tar -opcvf ${OUTDIR}/WebServer_${DATA}.tar ${WEBDIR}
 gzip ${OUTDIR}/WebServer_${DATA}.tar
 if [ "$?" ==  0 ];
 then
