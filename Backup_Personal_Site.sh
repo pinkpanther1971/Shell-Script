@@ -14,7 +14,7 @@
 
 # Carico le variabili necessarie allo script / Source env file
 
-. PATH_OF_FILE/NAM_ENV_FILE # File contenente tutte le variabili / This file contains all variables
+. PATH_OF_FILE/NAME_ENV_FILE # File contenente tutte le variabili / This file contains all variables
 
 #### INIZIO FUNZIONI / START FUNCTIONS ####
 

@@ -1,7 +1,5 @@
 #! /bin/bash
  
- . PATH_OF_FILE/NAM_ENV_FILE # File contenente tutte le variabili / This file contains all variables
- 
 # set -x
 
 # IT
@@ -16,6 +14,10 @@
 # Settings
 # Open Directory
 # Mail
+
+# Carico le variabili necessarie allo script / Source env file
+
+ . PATH_OF_FILE/NAME_ENV_FILE # File contenente tutte le variabili / This file contains all variables
 
 # Funzione per la rimozione dei file temporanei /Remove temporary files
 
