@@ -14,7 +14,7 @@
 
 # Carico le variabili necessarie allo script / Source env file
 
-. /Users/thegod/.pinkenv 
+. ENV_FILE_NAME # Nome del file contentente le variabili # ENV filename
 
 #### INIZIO FUNZIONI / START FUNCTIONS ####
 

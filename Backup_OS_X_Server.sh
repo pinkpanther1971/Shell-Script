@@ -1,6 +1,6 @@
 #! /bin/bash
  
- . /Users/thegod/.pinkenv # File contenente tutte le variabili / This file contains all variables
+ . ENV_FILE_NAME # File contenente tutte le variabili / This file contains all variables
  
  set -x
 
