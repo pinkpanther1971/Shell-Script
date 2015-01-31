@@ -1,6 +1,8 @@
 #! /bin/bash
  
-# set -x
+ . /Users/thegod/.pinkenv # File contenente tutte le variabili / This file contains all variables
+ 
+ set -x
 
 # IT
 
@@ -15,16 +17,15 @@
 # Open Directory
 # Mail
 
-# Carico le variabili necessarie allo script / Source env file
-
- . PATH_OF_FILE/NAME_ENV_FILE # File contenente tutte le variabili / This file contains all variables
-
 # Funzione per la rimozione dei file temporanei /Remove temporary files
 
 function RemoveTMP	{
 
 rm ${TMP_SERVER_RISULTATO}
 rm ${TMP_SERVIZI_RISULTATO}
+rm ${TMP_SERVIZI_RISULTATO_TEMP}
+rm ${TMP_FILE_APPOGGIO}
+rm ${TMP_FILE_COMBINATO}
 rm ${TMP_OD_RISULTATO}
 rm ${TMP_MAIL_RISULTATO}
 rm ${TMP_SICUREZZA_RISULTATO}
@@ -34,6 +35,7 @@ rm ${TMP_CORPO_MAIL}
 
 			}
 
+
 ### Funzione Backup Servzi Server / Server Configuration files backup
 
 function ServerAdminBackup {
@@ -41,7 +43,7 @@ function ServerAdminBackup {
 	{
 		 ${SERVERADMIN} settings all -x > ${SETTINGS_FILENAME}
 			if [ "$?" ==  0 ];
-				then
+			then
 					echo -e "Backup dei servizi Server eseguito correttamente\n " >> ${TMP_SERVER_RISULTATO}
 				else
 					echo -e "ATTENZIONE: problemi con il backup dei servizi Server\n " >> ${TMP_SERVER_RISULTATO}
@@ -51,16 +53,24 @@ function ServerAdminBackup {
 	{
 		for SERVIZIO in ${lista_servizi}; 
 		do
-	 		${SERVERADMIN} settings ${SERVIZIO} -x > ${GEN_BCK_DEST}/BCK_${SERVIZIO}_${DATA}.plist
+	 		${SERVERADMIN} settings ${SERVIZIO} -x > /Users/thegod/Downloads/BCK_${SERVIZIO}_${DATA}.plist
 				if [ "$?" ==  0 ];
 					then
-						echo -e "Backup del ${SERVIZIO} eseguito con esito positivo\n " >> ${TMP_SERVIZI_RISULTATO}
+						echo -e "Backup del ${SERVIZIO} eseguito con esito positivo\n " >> ${TMP_SERVIZI_RISULTATO_TEMP}
 					else
-						echo -e "ATTENZIONE: Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
+						echo -e "ATTENZIONE: Backup del ${SERVIZIO} eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO_TEMP}
 				fi
 		done
 	}
-				}
+TEST=`more ${TMP_SERVIZI_RISULTATO_TEMP} | grep ATTENZIONE | wc -l`
+				if [[ ${TEST} -eq 0 ]];
+then
+ echo -e "Backup dei servizi eseguito con esito positivo\n " >> ${TMP_SERVIZI_RISULTATO}
+else
+echo -e "ATTENZIONE: Backup dei servizi eseguito con esito negativo\n " >> ${TMP_SERVIZI_RISULTATO}
+fi
+}
+
 
 
 
@@ -91,7 +101,7 @@ function DirServBackup {
 
 function MailBackup {
 
-	  tar -opcvf ${GEN_BCK_DEST}/${MAIL_BCK_NAME} /Library/Server/Mail
+	  tar -cvf ${GEN_BCK_DEST}/${MAIL_BCK_NAME} /Library/Server/Mail
 	 gzip ${GEN_BCK_DEST}/${MAIL_BCK_NAME}			
 			if [ "$?" ==  0 ];
 				then
@@ -174,10 +184,13 @@ function InviaReportMail {
 export TEST=$(date +%H)
 
 if [[ ${TEST} == 00 ]]; then
-
-cat ${TMP_CORPO_MAIL} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
+/usr/bin/uuencode ${TMP_SERVIZI_RISULTATO_TEMP} ${NOME_ALLEGATO_MAIL} >> ${TMP_FILE_APPOGGIO}
+cat ${TMP_CORPO_MAIL} ${TMP_FILE_APPOGGIO} > ${TMP_FILE_COMBINATO}
+mailx -s "Risultato del Backup del ${OGGI2} alle ore ${ORA}" "${RECEIVER}" -F "Admin" -f "${SENDER}" < ${TMP_FILE_COMBINATO}
 else
-cat ${TMP_CORPO_MAIL} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER1}" -F "Admin" -f "${SENDER}"
+uuencode ${TMP_SERVIZI_RISULTATO_TEMP} ${NOME_ALLEGATO_MAIL} > ${TMP_FILE_APPOGGIO}
+cat ${TMP_CORPO_MAIL} ${TMP_FILE_APPOGGIO} > ${TMP_FILE_COMBINATO}
+mailx -s "Risultato del Backup del ${OGGI2} alle ore ${ORA}" "${RECEIVER1}" -F "Admin" -f "${SENDER}" < ${TMP_FILE_COMBINATO}
 fi
 }
 
@@ -199,6 +212,13 @@ case "${1}" in
 		CopiaBCK)
 			CopiaSicurezza
 			;;
+		test)
+		RemoveTMP
+		ServerAdminBackup
+		CambioPermessi
+		CorpoMail
+		InviaReportMail
+	;;
 		ALL)
 			RemoveTMP
 			ServerAdminBackup

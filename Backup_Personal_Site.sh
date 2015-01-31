@@ -14,7 +14,7 @@
 
 # Carico le variabili necessarie allo script / Source env file
 
-. PATH_OF_FILE/NAME_ENV_FILE # File contenente tutte le variabili / This file contains all variables
+. /Users/thegod/.pinkenv 
 
 #### INIZIO FUNZIONI / START FUNCTIONS ####
 
@@ -64,7 +64,7 @@ done
 
 function BackupWEB {
 
-tar -opcvf ${OUTDIR}/WebServer_${DATA}.tar ${WEBDIR}
+tar -pocvf ${OUTDIR}/WebServer_${DATA}.tar ${WEBDIR}
 gzip ${OUTDIR}/WebServer_${DATA}.tar
 if [ "$?" ==  0 ];
 then
@@ -149,9 +149,9 @@ export TEST=$(date +%H)
 
 if [[ ${TEST} == 00 ]]; then
 
-cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
+cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2} alle ore ${ORA}" "${RECEIVER}" -F "Admin" -f "${SENDER}"
 else
-cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2}" "${RECEIVER1}" -F "Admin" -f "${SENDER}"
+cat ${TMP_CORPO} | mailx -s "Risultato del Backup del ${OGGI2} alle ore ${ORA}" "${RECEIVER1}" -F "Admin" -f "${SENDER}"
 fi
 }
 
