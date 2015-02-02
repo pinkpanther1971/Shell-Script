@@ -212,13 +212,6 @@ case "${1}" in
 		CopiaBCK)
 			CopiaSicurezza
 			;;
-		test)
-		RemoveTMP
-		ServerAdminBackup
-		CambioPermessi
-		CorpoMail
-		InviaReportMail
-	;;
 		ALL)
 			RemoveTMP
 			ServerAdminBackup
