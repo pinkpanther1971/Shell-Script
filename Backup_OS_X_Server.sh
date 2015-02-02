@@ -53,7 +53,7 @@ function ServerAdminBackup {
 	{
 		for SERVIZIO in ${lista_servizi}; 
 		do
-	 		${SERVERADMIN} settings ${SERVIZIO} -x > /Users/thegod/Downloads/BCK_${SERVIZIO}_${DATA}.plist
+	 		${SERVERADMIN} settings ${SERVIZIO} -x > ${GEN_BCK_DEST}/BCK_${SERVIZIO}_${DATA}.plist
 				if [ "$?" ==  0 ];
 					then
 						echo -e "Backup del ${SERVIZIO} eseguito con esito positivo\n " >> ${TMP_SERVIZI_RISULTATO_TEMP}
