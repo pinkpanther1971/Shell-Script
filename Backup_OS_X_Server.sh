@@ -101,7 +101,7 @@ function DirServBackup {
 
 function MailBackup {
 
-	  tar -cvf ${GEN_BCK_DEST}/${MAIL_BCK_NAME} /Library/Server/Mail
+	  tar -pocvf ${GEN_BCK_DEST}/${MAIL_BCK_NAME} /Library/Server/Mail
 	 gzip ${GEN_BCK_DEST}/${MAIL_BCK_NAME}			
 			if [ "$?" ==  0 ];
 				then
