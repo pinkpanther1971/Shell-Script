@@ -179,7 +179,6 @@ case "${1}" in
 		BackupWEB
 		CopiaSicurezza
 		EliminaVecchiBCK
-		CambioPermessi
 		CorpoMail
 		InviaReportMail
 	;;

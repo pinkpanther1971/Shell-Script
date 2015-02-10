@@ -219,7 +219,6 @@ case "${1}" in
 			MailBackup
 			CopiaSicurezza
 			EliminaVecchiBCK
-			CambioPermessi
 			CorpoMail			
 			InviaReportMail
 			;;
